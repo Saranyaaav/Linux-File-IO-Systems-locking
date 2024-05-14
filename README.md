@@ -38,9 +38,45 @@ exit(0);}
 ```
 
 ## 2.To Write a C program that illustrates files locking
-
-
-
+```
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/file.h>
+int main (int argc, char* argv[])
+{ char* file = argv[1];
+ int fd;
+ struct flock lock;
+ printf ("opening %s\n", file);
+ /* Open a file descriptor to the file. */
+ fd = open (file, O_WRONLY);
+// acquire shared lock
+if (flock(fd, LOCK_SH) == -1) {
+    printf("error");
+}else
+{printf("Acquiring shared lock using flock\n");
+}
+getchar();
+// non-atomically upgrade to exclusive lock
+// do it in non-blocking mode, i.e. fail if can't upgrade immediately
+if (flock(fd, LOCK_EX | LOCK_NB) == -1) {
+    printf("error");
+}else
+{printf("Acquiring exclusive lock using flock\n");}
+getchar();
+// release lock
+// lock is also released automatically when close() is called or process exits
+if (flock(fd, LOCK_UN) == -1) {
+    printf("error");
+}else{
+printf("unlocking\n");
+}
+getchar();
+close (fd);
+return 0;
+}
+```
 
 ## OUTPUT
 
@@ -48,6 +84,7 @@ exit(0);}
 ![Screenshot 2024-04-28 204330](https://github.com/Saranyaaav/Linux-File-IO-Systems-locking/assets/144870813/93f9377c-ed57-44c6-a2e2-bb69b9ca4104)
 
 ## 2.To Write a C program that illustrates files locking
+![Screenshot 2024-05-14 134528](https://github.com/Saranyaaav/Linux-File-IO-Systems-locking/assets/144870813/b6c1daac-4ee4-41ac-9f5a-fd1987e1e4e7)
 
 # RESULT:
 The programs are executed successfully.
